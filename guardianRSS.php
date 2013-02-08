@@ -4,7 +4,7 @@ Plugin Name: GuardianRSS
 Description: Takes the top ten entries from the search 'fish' using the guardian's API, and stores them in post format on a page. Uses cron jobs to update the posts every 8 hours.
 Version: 0.1
 Author: M Purnell
-Author URI: www.markpurnell.co.uk
+Author URI: www.markpurnell.co.uk n
 Plugin URI: https://github.com/mpurnell133/guardianRSS
 */
 
@@ -12,8 +12,8 @@ Plugin URI: https://github.com/mpurnell133/guardianRSS
 	ini_set('error_reporting', E_ALL);
 	ini_set('display_errors',1);
 
-	include 'classes/RSSManager.php';
-	include 'classes/PostActions.php';
+	include 'classes/GuardianRSSManager.php';
+	include 'classes/GuardianPostActions.php';
 
 	//wordpress hooks
 	register_activation_hook(__FILE__, 'onActivate');
@@ -23,27 +23,19 @@ Plugin URI: https://github.com/mpurnell133/guardianRSS
 	//on plugin activation
 	function onActivate(){
 		//create the 'what the world is saying about fish' page
-		$postActions = new PostActions();
-		$parentID = $postActions->createPost('What the world is saying about fish', 'page', 'publish');
+		$postActions = new GuardianPostActions();
+		$postActions->createPost('What the world is saying about fish', 'page', 'publish', '[guardian]');
 
 		//create each individual post, and populate them with metadata from the guardian API
-		$rssManager = new RSSManager();
+		$rssManager = new GuardianRSSManager();
 		$posts = $rssManager->searchGuardianAPI('fish');
-
-		//error_log("SPECIAL FUNTIMES PRINTOUT".print_r($posts, 1));
-		foreach($posts as $post){
-			//error_log(print_r($post, 1));
-			$postID = $postActions->createPost($post->title, 'guardian', 'publish');
-			add_post_meta($postID, "summary", $post->summary);
-			add_post_meta($postID, "thumbnail", $post->thumbnail);
-			add_post_meta($postID, "link", $post->link);
-		}
+		$postActions->createGuardianPosts($posts);
 	}
 
 	//on plugin deactivation
 	function onDeactivate(){
 		//delete the page
-		$postActions = new PostActions();
+		$postActions = new GuardianPostActions();
 		$postActions->deleteGuardianPosts();
 	}
 

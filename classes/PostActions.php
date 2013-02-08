@@ -1,7 +1,7 @@
 <?php
 /*
 Class Name: PostActions
-Description: Handles all actions regaarding page creation, page deletion, and page modification
+Description: Handles all basic page/post related actions
 Author: M Purnell
 Author URI: www.markpurnell.co.uk
 */
@@ -13,25 +13,8 @@ Author URI: www.markpurnell.co.uk
 			return $postID;
 		}
 
-		//delete all children of a post
-		public function deleteGuardianPosts(){
-			$args = array( 
-			    'post_type' 	=> 'Guardian',
-			    'numberposts'	=> 10
-			);
-			$posts = get_posts($args);
-			error_log('START');
-			error_log(print_r($posts, 1));
-			foreach($posts as $post){
-				wp_delete_post($post->ID);
-			}
-			$page = get_page_by_title('What the world is saying about fish');
-			$pageID = $page->ID;
-			wp_delete_post($pageID);
-		}
-
-		//create and insert post into WP DB. Returns the WP ID of the post
-		public function createPost($title, $type, $status){
+		//create and insert post into WP DB. Returns the WP ID of the post upon creation
+		public function createPost($title, $type, $status, $content = ''){
 			$post =  array(
 				'post_title' 	=> $title,
 				'post_type' 	=> $type,
