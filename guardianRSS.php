@@ -29,7 +29,7 @@ Plugin URI: https://github.com/mpurnell133/guardianRSS
 	function onActivate(){
 		$postActions = new GuardianPostActions();
 		$rssManager = new GuardianRSSManager();
-		
+
 		//create the 'what the world is saying about fish' page
 		$postActions->createPost('What the world is saying about fish', 'page', 'publish', '[guardian]');
 
@@ -48,6 +48,7 @@ Plugin URI: https://github.com/mpurnell133/guardianRSS
 
 	//display the content of the guardian posts on pages with the [guardian] shortcode
 	function displayFeed(){
+		$postActions = new GuardianPostActions();
 		$posts = $postActions->getGuardianPosts();
 		foreach($posts as $post){
 			$title = $post->post_title;
