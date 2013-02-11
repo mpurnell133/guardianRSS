@@ -19,6 +19,7 @@ Author URI: www.markpurnell.co.uk
 				'post_title' 	=> $title,
 				'post_type' 	=> $type,
 				'post_status'	=> $status,
+				'post_content'	=> $content
 			);
 			return wp_insert_post($post);
 		}

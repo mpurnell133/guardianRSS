@@ -5,11 +5,11 @@ Description: Extends PostActions. This class contains all post actions that are 
 Author: M Purnell
 Author URI: www.markpurnell.co.uk
 */
-include 'postActions.php';
+include 'PostActions.php';
 
 	class GuardianPostActions extends PostActions{
 
-		//create the list of guardian posts
+		//create all guardian posts from an object
 		public function createGuardianPosts($posts){
 			foreach($posts as $post){
 				$postID = $this->createPost($post->title, 'guardian', 'publish');
@@ -21,7 +21,7 @@ include 'postActions.php';
 
 		//delete all guardian posts
 		public function deleteGuardianPosts(){
-			$posts = getGuardianPosts();
+			$posts = $this->getGuardianPosts();
 			foreach($posts as $post){
 				wp_delete_post($post->ID);
 			}
@@ -29,8 +29,8 @@ include 'postActions.php';
 			wp_delete_post($pageID);
 		}
 
-		//retrieve the list of guardian posts
-		private function getGuardianPosts(){
+		//retrieve the entire list of guardian posts
+		public function getGuardianPosts(){
 			$args = array( 
 			    'post_type' 	=> 'Guardian',
 			    'numberposts'	=> 10
@@ -40,15 +40,15 @@ include 'postActions.php';
 		}
 
 		//update the meta of the guardian posts
-		public function updateGuardianMeta(){
-			$posts = getGuardianPosts();
-			foreach($posts as $post){
-			error_log("RETURNING POST OBJECT");
-				error_log(print_r($post, 1));
-				add_post_meta($postID, "summary", $post->summary);
-				add_post_meta($postID, "thumbnail", $post->thumbnail);
-				add_post_meta($postID, "link", $post->link);
-			}
+		public function updateGuardianPosts($query){
+			//get the new posts
+			include_once 'GuardianRSSManager.php';
+			$rssManager = new GuardianRSSManager();
+			$newPosts = $rssManager->searchGuardianAPI($query = 'fish');
+
+			//delete the old posts, create the new ones
+			$this->deleteGuardianPosts();
+			$this->createGuardianPosts($newPosts);
 		}
 	}
 ?>

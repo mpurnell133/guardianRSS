@@ -1,6 +1,12 @@
+<?php
 /*
-Name: Update.php
-Description: (Preferably) called every 8 hours using a cron job. Updates the meta fields of each guardian post.
+Script Name: update.php
+Description: Called every 8 hours to refresh the Meta values of the guardian posts
 Author: M Purnell
 Author URI: www.markpurnell.co.uk
 */
+	include_once 'classes/GuardianPostActions.php';
+	$postActions = new GuardianPostActions();
+	$postActions->updateGuardianPosts();
+
+?>

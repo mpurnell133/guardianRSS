@@ -8,8 +8,13 @@ Author URI: www.markpurnell.co.uk
 
 	class GuardianRSSManager{
 		//return an array of post objects from the guardian API
-		public function searchGuardianAPI($query){
+		public function searchGuardianAPI($query = 'fish'){
+			if(!get_option('search')){
+				$query = 'fish';
+			}
 			//get info from an API request
+
+			add_option('searchTerm', $query);
 			$RSS_json = $this->getRSSasJSON('http://content.guardianapis.com/search?q='.$query.'&format=json&show-fields=thumbnail%2Cstandfirst');
 			$response = $RSS_json->response;
 			$results = $response->results;
@@ -38,7 +43,6 @@ Author URI: www.markpurnell.co.uk
 			}
 			return $posts;
 		}
-		
 		//get a JSON string from a url, and return it as a JSON file
 		private function getRSSasJSON($url){
 			$RSS_string = file_get_contents($url);
